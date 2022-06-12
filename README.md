@@ -64,8 +64,8 @@ For full project examples please see [https://github.com/binis2/code-generation-
 ```xml
     <dependency>
         <groupId>dev.binis</groupId>
-        <artifactId>code-generator-jackson</artifactId>
-        <version>0.2.5</version>
+        <artifactId>code-generator-spring-configuration</artifactId>
+        <version>0.3.0</version>
     </dependency>
 ```
 

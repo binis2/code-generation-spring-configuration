@@ -21,14 +21,30 @@ package net.binis.codegen.spring.configuration;
  */
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
+import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
+import net.binis.codegen.spring.query.QueryProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class CodeGenSpringConfiguration {
+
+    public CodeGenSpringConfiguration(CodeGenProperties properties) {
+        if (properties.isShow_hql()) {
+            log.info("Query logging enabled!");
+            QueryProcessor.logQuery();
+            if (properties.isShow_hql_params()) {
+                log.info("Query params logging enabled!");
+                QueryProcessor.logParams();
+            }
+        }
+    }
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {

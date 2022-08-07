@@ -22,6 +22,7 @@ package net.binis.codegen.spring.configuration;
 
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
+import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
@@ -30,6 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 @Configuration
@@ -43,6 +47,11 @@ public class CodeGenSpringConfiguration {
                 log.info("Query params logging enabled!");
                 QueryProcessor.logParams();
             }
+        }
+
+        if (isNull(CodeFactory.getProjectionProvider())) {
+            var factory = new SpelAwareProxyProjectionFactory();
+            CodeFactory.setProjectionProvider((cls, projections) -> obj -> factory.createProjection(projections[0], obj));
         }
     }
 

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.binis</groupId>
     <artifactId>code-generator-spring-configuration</artifactId>
-    <version>0.3.9</version>
+    <version>0.3.10</version>
     <name>code-generator-spring-configuration</name>
     <description>Binis Code Generation Spring Boot Configuration Extension</description>
     <url>https://github.com/binis2/code-generator-spring-configuration</url>
@@ -64,22 +64,22 @@
         <dependency>
             <groupId>dev.binis</groupId>
             <artifactId>code-generator-jackson</artifactId>
-            <version>0.3.9</version>
+            <version>0.3.10</version>
         </dependency>
         <dependency>
             <groupId>dev.binis</groupId>
             <artifactId>code-generator-spring</artifactId>
-            <version>0.3.9</version>
+            <version>0.3.10</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.7.2</version>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator-autoconfigure</artifactId>
-            <version>2.7.2</version>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

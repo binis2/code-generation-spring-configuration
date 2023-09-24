@@ -27,8 +27,8 @@ import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
 import net.binis.codegen.spring.query.QueryProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
@@ -39,7 +39,7 @@ import static java.util.Objects.isNull;
 @Configuration
 public class CodeGenSpringConfiguration {
 
-    public CodeGenSpringConfiguration(CodeGenProperties properties) {
+    public CodeGenSpringConfiguration(CodeGenProperties properties, ApplicationContext context) {
         if (properties.isShow_hql()) {
             log.info("Query logging enabled!");
             QueryProcessor.logQuery();
@@ -53,6 +53,8 @@ public class CodeGenSpringConfiguration {
             var factory = new SpelAwareProxyProjectionFactory();
             CodeFactory.setProjectionProvider((cls, projections) -> obj -> factory.createProjection(projections[0], obj));
         }
+
+        CodeFactory.registerForeignFactory(context::getBean);
     }
 
     @Bean

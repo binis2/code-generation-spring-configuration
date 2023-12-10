@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Slf4j
 @Configuration
@@ -54,7 +55,7 @@ public class CodeGenSpringConfiguration {
             CodeFactory.setProjectionProvider((cls, projections) -> obj -> factory.createProjection(projections[0], obj));
         }
 
-        CodeFactory.registerForeignFactory(context::getBean);
+        CodeFactory.registerForeignFactory((cls , params) -> nonNull(params) || params.length == 0 ? context.getBean(cls) : context.getBean(cls, params));
     }
 
     @Bean

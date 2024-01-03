@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
+import net.binis.codegen.jackson.serialize.CodeEnumStringSerializer;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
 import net.binis.codegen.spring.query.QueryProcessor;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -62,6 +63,7 @@ public class CodeGenSpringConfiguration {
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
         SimpleModule module = new SimpleModule();
         module.setDeserializerModifier(new CodeBeanDeserializerModifier());
+        module.addSerializer(new CodeEnumStringSerializer());
         return builder -> builder.postConfigurer(c -> c.setTypeFactory(new CodeProxyTypeFactory(c.getTypeFactory()))).modulesToInstall(module);
     }
 

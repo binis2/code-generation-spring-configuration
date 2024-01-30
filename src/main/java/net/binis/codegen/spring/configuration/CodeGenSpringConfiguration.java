@@ -26,7 +26,9 @@ import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
 import net.binis.codegen.jackson.serialize.CodeEnumStringSerializer;
+import net.binis.codegen.map.Mapper;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
+import net.binis.codegen.spring.mapping.keys.MappingKeys;
 import net.binis.codegen.spring.query.QueryProcessor;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.ApplicationContext;
@@ -57,6 +59,7 @@ public class CodeGenSpringConfiguration {
         }
 
         CodeFactory.registerForeignFactory((cls , params) -> nonNull(params) || params.length == 0 ? context.getBean(cls) : context.getBean(cls, params));
+        Mapper.map().key(MappingKeys.JSON).source(Object.class).destination(String.class).register();
     }
 
     @Bean

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.binis</groupId>
     <artifactId>code-generator-spring-configuration</artifactId>
-    <version>1.2.13</version>
+    <version>1.2.14</version>
     <name>code-generator-spring-configuration</name>
     <description>Binis Code Generation Spring Boot Configuration Extension</description>
     <url>https://github.com/binis2/code-generator-spring-configuration</url>
@@ -53,7 +53,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <dev.binis>1.2.13</dev.binis>
+        <dev.binis>1.2.14</dev.binis>
         <license.licenseName>apache_v2</license.licenseName>
         <resource.delimiter>@</resource.delimiter>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -75,17 +75,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-actuator-autoconfigure</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>6.1.3</version>
+            <version>6.1.6</version>
         </dependency>
     </dependencies>
 
@@ -95,7 +95,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.12.1</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <compilerArgs>
                             <arg>-parameters</arg>
@@ -105,7 +105,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>2.3.0</version>
+                    <version>2.4.0</version>
 
                     <configuration>
                         <verbose>false</verbose>
@@ -169,7 +169,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <executions>
                         <execution>
                             <id>attach-sources</id>
@@ -218,7 +218,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -245,7 +245,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.3</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

@@ -9,9 +9,9 @@ package net.binis.codegen.spring.configuration;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,8 @@ package net.binis.codegen.spring.configuration;
  * #L%
  */
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.factory.CodeFactory;
@@ -30,6 +32,7 @@ import net.binis.codegen.map.Mapper;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
 import net.binis.codegen.spring.mapping.keys.MappingKeys;
 import net.binis.codegen.spring.query.QueryProcessor;
+import net.binis.codegen.tools.Reflection;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -58,8 +61,25 @@ public class CodeGenSpringConfiguration {
             CodeFactory.setProjectionProvider((cls, projections) -> obj -> factory.createProjection(projections[0], obj));
         }
 
-        CodeFactory.registerForeignFactory((cls , params) -> nonNull(params) || params.length == 0 ? context.getBean(cls) : context.getBean(cls, params));
-        Mapper.map().key(MappingKeys.JSON).source(Object.class).destination(String.class).register();
+        CodeFactory.registerForeignFactory((cls, params) -> nonNull(params) || params.length == 0 ? context.getBean(cls) : context.getBean(cls, params));
+        Mapper.map().key(MappingKeys.JSON).source(Object.class).destination(String.class).producer(o -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).writeValueAsString(o);
+            } catch (JsonProcessingException e) {
+                return "{ \"exception\": \"" + e.getMessage() + "\"}";
+            }
+        });
+        var xml = Reflection.loadClass("com.fasterxml.jackson.dataformat.xml.XmlMapper");
+        if (nonNull(xml)) {
+            Mapper.map().key(MappingKeys.XML).source(Object.class).destination(String.class).producer(o -> {
+                try {
+                    return ((ObjectMapper) CodeFactory.create(xml)).writeValueAsString(o);
+                } catch (JsonProcessingException e) {
+                    return "<exception>" + e.getMessage() + "</exception>";
+                }
+            });
+        }
+
     }
 
     @Bean

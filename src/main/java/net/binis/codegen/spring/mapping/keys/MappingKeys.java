@@ -23,5 +23,6 @@ package net.binis.codegen.spring.mapping.keys;
 public class MappingKeys {
 
     public static final Object JSON = new Object();
+    public static final Object XML = new Object();
 
 }

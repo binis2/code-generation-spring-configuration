@@ -24,6 +24,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
+import net.binis.codegen.exception.MapperException;
+import net.binis.codegen.exception.ValidationFormException;
 import net.binis.codegen.factory.CodeFactory;
 import net.binis.codegen.jackson.CodeBeanDeserializerModifier;
 import net.binis.codegen.jackson.CodeProxyTypeFactory;
@@ -69,6 +71,16 @@ public class CodeGenSpringConfiguration {
                 return "{ \"exception\": \"" + e.getMessage() + "\"}";
             }
         });
+        Mapper.registerMapper(String.class, Object.class, MappingKeys.JSON, (source, destination) -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).readerForUpdating(destination).readValue(source);
+            } catch (ValidationFormException v) {
+                throw v;
+            } catch (Exception e) {
+                throw new MapperException(e);
+            }
+        });
+
         var xml = Reflection.loadClass("com.fasterxml.jackson.dataformat.xml.XmlMapper");
         if (nonNull(xml)) {
             Mapper.map().key(MappingKeys.XML).source(Object.class).destination(String.class).producer(o -> {
@@ -78,6 +90,16 @@ public class CodeGenSpringConfiguration {
                     return "<exception>" + e.getMessage() + "</exception>";
                 }
             });
+            Mapper.registerMapper(String.class, Object.class, MappingKeys.XML, (source, destination) -> {
+                try {
+                    return ((ObjectMapper) CodeFactory.create(xml)).readerForUpdating(destination).readValue(source);
+                } catch (ValidationFormException v) {
+                    throw v;
+                } catch (Exception e) {
+                    throw new MapperException(e);
+                }
+            });
+
         }
 
     }

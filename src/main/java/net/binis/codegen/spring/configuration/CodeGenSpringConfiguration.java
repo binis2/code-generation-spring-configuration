@@ -41,6 +41,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
+import java.util.Map;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -74,6 +76,16 @@ public class CodeGenSpringConfiguration {
         Mapper.registerMapper(String.class, Object.class, MappingKeys.JSON, (source, destination) -> {
             try {
                 return CodeFactory.create(ObjectMapper.class).readerForUpdating(destination).readValue(source);
+            } catch (ValidationFormException v) {
+                throw v;
+            } catch (Exception e) {
+                throw new MapperException(e);
+            }
+        });
+
+        Mapper.registerMapper(Map.class, Object.class, (source, destination) -> {
+            try {
+                return CodeFactory.create(ObjectMapper.class).convertValue(source, destination.getClass());
             } catch (ValidationFormException v) {
                 throw v;
             } catch (Exception e) {

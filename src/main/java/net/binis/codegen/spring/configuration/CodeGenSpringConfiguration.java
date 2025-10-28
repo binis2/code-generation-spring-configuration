@@ -83,16 +83,6 @@ public class CodeGenSpringConfiguration {
             }
         });
 
-        Mapper.registerMapper(Map.class, Object.class, (source, destination) -> {
-            try {
-                return CodeFactory.create(ObjectMapper.class).convertValue(source, destination.getClass());
-            } catch (ValidationFormException v) {
-                throw v;
-            } catch (Exception e) {
-                throw new MapperException(e);
-            }
-        });
-
         var xml = Reflection.loadClass("com.fasterxml.jackson.dataformat.xml.XmlMapper");
         if (nonNull(xml)) {
             Mapper.map().key(MappingKeys.XML).source(Object.class).destination(String.class).producer(o -> {

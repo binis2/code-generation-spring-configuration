@@ -41,8 +41,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 
-import java.util.Map;
-
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -50,6 +48,7 @@ import static java.util.Objects.nonNull;
 @Configuration
 public class CodeGenSpringConfiguration {
 
+    @SuppressWarnings("unchecked")
     public CodeGenSpringConfiguration(CodeGenProperties properties, ApplicationContext context) {
         if (properties.isShow_hql()) {
             log.info("Query logging enabled!");

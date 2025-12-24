@@ -21,6 +21,7 @@ package net.binis.codegen.spring;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.map.Mapper;
 import net.binis.codegen.spring.mapping.keys.MappingKeys;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 @SpringBootTest(classes = TestApplication.class)
@@ -55,6 +58,15 @@ public class ConfigIntegrationTest {
         map = Map.of("5", 5);
         Mapper.map(map, String.class, MappingKeys.JSON);
 
+        var prop = Mapper.convert("{ \"prop\": \"test\" }", TestObject.class);
+        assertEquals("test", prop.getProp());
+
+    }
+
+    @CodeBuilder
+    public interface TestObjectPrototype {
+
+        String prop();
 
     }
 

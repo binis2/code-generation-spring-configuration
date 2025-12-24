@@ -20,9 +20,6 @@ package net.binis.codegen.spring.configuration;
  * #L%
  */
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.exception.MapperException;
 import net.binis.codegen.exception.ValidationFormException;
@@ -35,11 +32,14 @@ import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
 import net.binis.codegen.spring.mapping.keys.MappingKeys;
 import net.binis.codegen.spring.query.QueryProcessor;
 import net.binis.codegen.tools.Reflection;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.XmlMapperBuilderCustomizer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -68,7 +68,7 @@ public class CodeGenSpringConfiguration {
         Mapper.map().key(MappingKeys.JSON).source(Object.class).destination(String.class).producer(o -> {
             try {
                 return CodeFactory.create(ObjectMapper.class).writeValueAsString(o);
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 return "{ \"exception\": \"" + e.getMessage() + "\"}";
             }
         });
@@ -82,12 +82,12 @@ public class CodeGenSpringConfiguration {
             }
         });
 
-        var xml = Reflection.loadClass("com.fasterxml.jackson.dataformat.xml.XmlMapper");
+        var xml = Reflection.loadClass("tools.jackson.dataformat.xml.XmlMapper");
         if (nonNull(xml)) {
             Mapper.map().key(MappingKeys.XML).source(Object.class).destination(String.class).producer(o -> {
                 try {
                     return ((ObjectMapper) CodeFactory.create(xml)).writeValueAsString(o);
-                } catch (JsonProcessingException e) {
+                } catch (Exception e) {
                     return "<exception>" + e.getMessage() + "</exception>";
                 }
             });
@@ -100,17 +100,26 @@ public class CodeGenSpringConfiguration {
                     throw new MapperException(e);
                 }
             });
-
         }
 
     }
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-        SimpleModule module = new SimpleModule();
+    public JsonMapperBuilderCustomizer jsonCustomizer() {
+        var module = new SimpleModule();
         module.setDeserializerModifier(new CodeBeanDeserializerModifier());
         module.addSerializer(new CodeEnumStringSerializer());
-        return builder -> builder.postConfigurer(c -> c.setTypeFactory(new CodeProxyTypeFactory(c.getTypeFactory()))).modulesToInstall(module);
+        return builder -> builder.typeFactory(new CodeProxyTypeFactory(builder.typeFactory())).addModule(module);
     }
+
+    /* If XML handling is required add this code to your code.   Potentially
+        @Bean
+        public XmlMapperBuilderCustomizer xmlCustomizer() {
+            var module = new SimpleModule();
+            module.setDeserializerModifier(new CodeBeanDeserializerModifier());
+            module.addSerializer(new CodeEnumStringSerializer());
+            return builder -> builder.typeFactory(new CodeProxyTypeFactory(builder.typeFactory())).addModule(module);
+        }
+    */
 
 }

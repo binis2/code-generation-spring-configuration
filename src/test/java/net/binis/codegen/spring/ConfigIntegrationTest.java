@@ -23,7 +23,7 @@ package net.binis.codegen.spring;
 import lombok.extern.slf4j.Slf4j;
 import net.binis.codegen.annotation.builder.CodeBuilder;
 import net.binis.codegen.map.Mapper;
-import net.binis.codegen.spring.mapping.keys.MappingKeys;
+import net.binis.codegen.jackson.mapping.keys.MappingKeys;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

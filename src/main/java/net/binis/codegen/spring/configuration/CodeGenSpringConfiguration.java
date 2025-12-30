@@ -29,11 +29,10 @@ import net.binis.codegen.jackson.CodeProxyTypeFactory;
 import net.binis.codegen.jackson.serialize.CodeEnumStringSerializer;
 import net.binis.codegen.map.Mapper;
 import net.binis.codegen.spring.configuration.properties.CodeGenProperties;
-import net.binis.codegen.spring.mapping.keys.MappingKeys;
+import net.binis.codegen.jackson.mapping.keys.MappingKeys;
 import net.binis.codegen.spring.query.QueryProcessor;
 import net.binis.codegen.tools.Reflection;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
-import org.springframework.boot.jackson.autoconfigure.XmlMapperBuilderCustomizer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,43 +64,6 @@ public class CodeGenSpringConfiguration {
         }
 
         CodeFactory.registerForeignFactory((cls, params) -> nonNull(params) || params.length == 0 ? context.getBean(cls) : context.getBean(cls, params));
-        Mapper.map().key(MappingKeys.JSON).source(Object.class).destination(String.class).producer(o -> {
-            try {
-                return CodeFactory.create(ObjectMapper.class).writeValueAsString(o);
-            } catch (Exception e) {
-                return "{ \"exception\": \"" + e.getMessage() + "\"}";
-            }
-        });
-        Mapper.registerMapper(String.class, Object.class, MappingKeys.JSON, (source, destination) -> {
-            try {
-                return CodeFactory.create(ObjectMapper.class).readerForUpdating(destination).readValue(source);
-            } catch (ValidationFormException v) {
-                throw v;
-            } catch (Exception e) {
-                throw new MapperException(e);
-            }
-        });
-
-        var xml = Reflection.loadClass("tools.jackson.dataformat.xml.XmlMapper");
-        if (nonNull(xml)) {
-            Mapper.map().key(MappingKeys.XML).source(Object.class).destination(String.class).producer(o -> {
-                try {
-                    return ((ObjectMapper) CodeFactory.create(xml)).writeValueAsString(o);
-                } catch (Exception e) {
-                    return "<exception>" + e.getMessage() + "</exception>";
-                }
-            });
-            Mapper.registerMapper(String.class, Object.class, MappingKeys.XML, (source, destination) -> {
-                try {
-                    return ((ObjectMapper) CodeFactory.create(xml)).readerForUpdating(destination).readValue(source);
-                } catch (ValidationFormException v) {
-                    throw v;
-                } catch (Exception e) {
-                    throw new MapperException(e);
-                }
-            });
-        }
-
     }
 
     @Bean
